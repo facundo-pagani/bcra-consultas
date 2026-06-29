@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consultas BCRA — Pagani S.A.</title>
+<style>
+  :root {
+    --bg: #F7F8FA;
+    --surface: #FFFFFF;
+    --border: #E2E6EC;
+    --text-primary: #1A202C;
+    --text-secondary: #5A6577;
+    --accent: #1B4F8A;
+    --accent-light: #EBF1FA;
+    --success: #1A7A4A;
+    --success-bg: #EDFAF3;
+    --warn: #B45309;
+    --warn-bg: #FEF3E2;
+    --danger: #C0392B;
+    --danger-bg: #FEECEB;
+    --tag-1: #1A7A4A; --tag-1bg: #EDFAF3;
+    --tag-2: #B45309; --tag-2bg: #FEF3E2;
+    --tag-3: #C27803; --tag-3bg: #FFF8E1;
+    --tag-4: #D4500A; --tag-4bg: #FFF0E5;
+    --tag-5: #C0392B; --tag-5bg: #FEECEB;
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --mono: 'Consolas', 'Courier New', monospace;
+    --radius: 8px;
+    --shadow: 0 1px 4px rgba(0,0,0,0.07);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--accent);
+    color: #fff;
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  header .logo {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  header .logo span { opacity: 0.6; font-weight: 400; font-size: 14px; margin-left: 8px; }
+  header .bcra-badge {
+    margin-left: auto;
+    font-size: 11px;
+    background: rgba(255,255,255,0.15);
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Layout ── */
+  .layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 0;
+    min-height: calc(100vh - 61px);
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .sidebar-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin: 16px 0 8px;
+  }
+  .sidebar-label:first-child { margin-top: 0; }
+  .nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius);
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: var(--font);
+    font-size: 14px;
+    color: var(--text-secondary);
+    text-align: left;
+    transition: background 0.15s, color 0.15s;
+    width: 100%;
+  }
+  .nav-btn:hover { background: var(--accent-light); color: var(--accent); }
+  .nav-btn.active { background: var(--accent-light); color: var(--accent); font-weight: 600; }
+  .nav-btn .icon { font-size: 18px; width: 24px; text-align: center; }
+
+  /* ── Main panel ── */
+  .main {
+    padding: 32px;
+    overflow-y: auto;
+  }
+
+  /* ── Tabs ── */
+  .tab { display: none; }
+  .tab.active { display: block; }
+
+  /* ── Section titles ── */
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .section-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  /* ── Form controls ── */
+  .form-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 160px;
+  }
+  label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  input[type="text"], input[type="number"], select {
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    font-family: var(--font);
+    font-size: 14px;
+    color: var(--text-primary);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  input:focus, select:focus { border-color: var(--accent); background: #fff; }
+  input.error { border-color: var(--danger); }
+
+  .btn {
+    padding: 10px 22px;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 600;
+    transition: opacity 0.15s, transform 0.1s;
+    white-space: nowrap;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-secondary { background: var(--border); color: var(--text-primary); }
+  .btn-secondary:hover { opacity: 0.8; }
+  .btn-sm { padding: 7px 14px; font-size: 12px; }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .hint { font-size: 11px; color: var(--text-secondary); margin-top: 6px; }
+
+  /* ── Results ── */
+  .result-box {
+    margin-top: 20px;
+    display: none;
+  }
+  .result-box.visible { display: block; }
+
+  /* Denominación header */
+  .denom-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .denom-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .cuit-sub {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-family: var(--mono);
+    margin-top: 2px;
+  }
+
+  /* Situación badges */
+  .sit-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .sit-1 { background: var(--tag-1bg); color: var(--tag-1); }
+  .sit-2 { background: var(--tag-2bg); color: var(--tag-2); }
+  .sit-3 { background: var(--tag-3bg); color: var(--tag-3); }
+  .sit-4 { background: var(--tag-4bg); color: var(--tag-4); }
+  .sit-5 { background: var(--tag-5bg); color: var(--tag-5); }
+  .sit-ok { background: var(--success-bg); color: var(--success); }
+  .sit-warn { background: var(--warn-bg); color: var(--warn); }
+
+  /* Período */
+  .periodo-block { margin-bottom: 20px; }
+  .periodo-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Entidad row */
+  .entidad-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .entidad-name { font-weight: 500; }
+  .entidad-monto { color: var(--text-secondary); font-family: var(--mono); font-size: 12px; }
+  .entidad-flags { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .flag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    background: var(--warn-bg);
+    color: var(--warn);
+  }
+  .flag.danger { background: var(--danger-bg); color: var(--danger); }
+
+  /* Cheques */
+  .cheque-card {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    background: var(--bg);
+  }
+  .cheque-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .cheque-num { font-family: var(--mono); font-size: 13px; font-weight: 700; }
+  .cheque-causal {
+    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-weight: 700;
+    background: var(--danger-bg);
+    color: var(--danger);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .cheque-causal.defecto { background: var(--warn-bg); color: var(--warn); }
+  .cheque-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+  }
+  .cheque-field { font-size: 12px; }
+  .cheque-field .k { color: var(--text-secondary); display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .cheque-field .v { font-weight: 600; margin-top: 2px; }
+  .multa-impaga { color: var(--danger); }
+  .multa-ok { color: var(--success); }
+
+  /* Empty / error states */
+  .state-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-secondary);
+  }
+  .state-empty .emoji { font-size: 36px; margin-bottom: 10px; }
+  .state-empty p { font-size: 14px; }
+  .state-error {
+    background: var(--danger-bg);
+    border: 1px solid #f5c6c3;
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    color: var(--danger);
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  /* Spinner */
+  .spinner {
+    display: inline-block;
+    width: 18px; height: 18px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Lote ── */
+  .lote-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-primary);
+    background: var(--bg);
+    resize: vertical;
+    outline: none;
+    line-height: 1.6;
+  }
+  textarea:focus { border-color: var(--accent); background: #fff; }
+
+  /* Lote progress */
+  .progress-bar-wrap {
+    background: var(--border);
+    border-radius: 4px;
+    height: 6px;
+    margin: 14px 0 8px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 4px;
+    transition: width 0.3s;
+  }
+  .progress-label { font-size: 12px; color: var(--text-secondary); }
+
+  /* Lote table */
+  .table-wrap { overflow-x: auto; margin-top: 16px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th {
+    background: var(--bg);
+    border-bottom: 2px solid var(--border);
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  tr:hover td { background: var(--accent-light); }
+  .mono { font-family: var(--mono); }
+  .text-right { text-align: right; }
+
+  /* Export button */
+  .export-row { display: flex; justify-content: flex-end; margin-top: 12px; }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { flex-direction: row; overflow-x: auto; padding: 12px; border-right: none; border-bottom: 1px solid var(--border); }
+    .sidebar-label { display: none; }
+    .main { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">Pagani S.A. <span>· Consultas BCRA</span></div>
+  </div>
+  <div class="bcra-badge">API BCRA Oficial</div>
+</header>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-label">Consulta individual</div>
+    <button class="nav-btn active" onclick="switchTab('deudores')" id="nav-deudores">
+      <span class="icon">🏦</span> Central de Deudores
+    </button>
+    <button class="nav-btn" onclick="switchTab('cheques-cuit')" id="nav-cheques-cuit">
+      <span class="icon">❌</span> Cheques por CUIT
+    </button>
+    <button class="nav-btn" onclick="switchTab('cheques-num')" id="nav-cheques-num">
+      <span class="icon">🔍</span> Cheque por Número
+    </button>
+
+    <div class="sidebar-label">Procesamiento</div>
+    <button class="nav-btn" onclick="switchTab('lote')" id="nav-lote">
+      <span class="icon">📋</span> Consulta en Lote
+    </button>
+  </nav>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- ══════════ TAB: Central de Deudores ══════════ -->
+    <div class="tab active" id="tab-deudores">
+      <div class="section-title">Central de Deudores</div>
+      <div class="section-desc">Situación crediticia actual e histórica (24 meses) de un cliente en el sistema financiero.</div>
+
+      <div class="card">
+        <div class="card-title">Parámetros de consulta</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cuit-deudores">CUIT / CUIL / CDI</label>
+            <input type="text" id="cuit-deudores" placeholder="20123456789" maxlength="11">
+          </div>
+          <div class="form-group" style="max-width:180px;">
+            <label for="tipo-deudores">Período</label>
+            <select id="tipo-deudores">
+              <option value="actual">Último período</option>
+              <option value="historico">Histórico (24 meses)</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="consultarDeudores()" id="btn-deudores">Consultar</button>
+        </div>
+        <div class="hint">Ingresá el CUIT sin guiones (11 dígitos). La consulta devuelve situación 1–5 por entidad.</div>
+      </div>
+
+      <div class="result-box" id="result-deudores"></div>
+    </div>
+
+    <!-- ══════════ TAB: Cheques por CUIT ══════════ -->
+    <div class="tab" id="tab-cheques-cuit">
+      <div class="section-title">Cheques Rechazados por CUIT</div>
+      <div class="section-desc">Listado de cheques rechazados de un cliente, con causal, monto y estado de multa.</div>
+
+      <div class="card">
+        <div class="card-title">Parámetros de consulta</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cuit-cheques">CUIT / CUIL / CDI</label>
+            <input type="text" id="cuit-cheques" placeholder="20123456789" maxlength="11">
+          </div>
+          <button class="btn btn-primary" onclick="consultarChequesCuit()" id="btn-cheques-cuit">Consultar</button>
+        </div>
+        <div class="hint">Devuelve todos los cheques rechazados vinculados al CUIT (sin fondos, defectos formales, etc.).</div>
+      </div>
+
+      <div class="result-box" id="result-cheques-cuit"></div>
+    </div>
+
+    <!-- ══════════ TAB: Cheque por Número ══════════ -->
+    <div class="tab" id="tab-cheques-num">
+      <div class="section-title">Verificar Cheque por Número</div>
+      <div class="section-desc">Consultá si un cheque específico figura como denunciado, indicando banco y número.</div>
+
+      <div class="card">
+        <div class="card-title">Datos del cheque</div>
+        <div class="form-row">
+          <div class="form-group" style="max-width:300px;">
+            <label for="entidad-select">Entidad bancaria</label>
+            <select id="entidad-select">
+              <option value="">— Cargando bancos... —</option>
+            </select>
+          </div>
+          <div class="form-group" style="max-width:200px;">
+            <label for="num-cheque">Número de cheque</label>
+            <input type="number" id="num-cheque" placeholder="12345678">
+          </div>
+          <button class="btn btn-primary" onclick="consultarChequeNum()" id="btn-cheque-num">Consultar</button>
+        </div>
+        <div class="hint">Útil para verificar un cheque recibido antes de depositarlo.</div>
+      </div>
+
+      <div class="result-box" id="result-cheque-num"></div>
+    </div>
+
+    <!-- ══════════ TAB: Lote ══════════ -->
+    <div class="tab" id="tab-lote">
+      <div class="section-title">Consulta en Lote</div>
+      <div class="section-desc">Pegá una lista de CUITs y consultá Central de Deudores y Cheques Rechazados en paralelo.</div>
+
+      <div class="card">
+        <div class="card-title">Lista de CUITs</div>
+        <textarea id="lote-input" rows="6" placeholder="Pegá uno por línea:&#10;20123456789&#10;27987654321&#10;30712345678"></textarea>
+        <div class="hint" style="margin-top:8px;">Un CUIT por línea, 11 dígitos sin guiones. Máximo 50 por consulta para no saturar la API.</div>
+
+        <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="procesarLote()" id="btn-lote">Procesar lista</button>
+          <button class="btn btn-secondary" onclick="limpiarLote()">Limpiar</button>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;text-transform:none;letter-spacing:0;color:var(--text-primary);cursor:pointer;">
+            <input type="file" accept=".txt,.csv" onchange="cargarArchivo(this)" style="display:none" id="file-input">
+            <span class="btn btn-secondary btn-sm" onclick="document.getElementById('file-input').click()">📂 Cargar archivo</span>
+          </label>
+        </div>
+
+        <div id="lote-progress" style="display:none; margin-top:16px;">
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+          <div class="progress-label" id="progress-label">Procesando...</div>
+        </div>
+      </div>
+
+      <div class="result-box" id="result-lote"></div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// Helpers
+// ══════════════════════════════════════════════
+const BASE_DEUDORES = 'https://api.bcra.gob.ar/CentralDeDeudores/v1.0';
+const BASE_CHEQUES  = 'https://api.bcra.gob.ar/cheques/v1.0';
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+}
+
+function parseCuit(raw) {
+  return raw.replace(/\D/g, '');
+}
+
+function validarCuit(c) {
+  return /^\d{11}$/.test(c);
+}
+
+function formatCuit(c) {
+  return c.length === 11 ? `${c.slice(0,2)}-${c.slice(2,10)}-${c.slice(10)}` : c;
+}
+
+function formatPeriodo(p) {
+  // AAAAMM → mes año
+  const meses = ['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const anio = p.slice(0,4);
+  const mes = parseInt(p.slice(4,6));
+  return `${meses[mes] || p.slice(4,6)} ${anio}`;
+}
+
+function formatMonto(m) {
+  if (m == null) return '—';
+  // viene en miles de pesos
+  const val = m * 1000;
+  return '$' + val.toLocaleString('es-AR', {minimumFractionDigits:0, maximumFractionDigits:0});
+}
+
+function formatFecha(f) {
+  if (!f) return '—';
+  const [y,m,d] = f.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+function sitLabel(n) {
+  const labels = {
+    1: 'Situación 1 — Normal',
+    2: 'Situación 2 — Seguimiento especial',
+    3: 'Situación 3 — Con problemas',
+    4: 'Situación 4 — Alto riesgo',
+    5: 'Situación 5 — Irrecuperable',
+  };
+  return labels[n] || `Situación ${n}`;
+}
+
+function sitClass(n) { return n >= 1 && n <= 5 ? `sit-${n}` : 'sit-1'; }
+
+function peorSituacion(periodos) {
+  let max = 1;
+  (periodos || []).forEach(p => (p.entidades || []).forEach(e => { if(e.situacion > max) max = e.situacion; }));
+  return max;
+}
+
+function setLoading(btnId, loading) {
+  const btn = document.getElementById(btnId);
+  if (!btn) return;
+  btn.disabled = loading;
+  btn.innerHTML = loading
+    ? '<span class="spinner"></span>Consultando...'
+    : btn.dataset.label || btn.innerHTML;
+  if (!loading && !btn.dataset.label) btn.dataset.label = btn.innerHTML;
+}
+
+async function fetchBCRA(url) {
+  const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+  const data = await res.json();
+  if (data.status === 404) return { notFound: true };
+  if (data.status !== 200) throw new Error((data.errorMessages || ['Error desconocido']).join(', '));
+  return data.results;
+}
+
+function showError(containerId, msg) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = `<div class="state-error">⚠️ ${msg}</div>`;
+  el.classList.add('visible');
+}
+
+function showEmpty(containerId, msg) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = `<div class="card"><div class="state-empty"><div class="emoji">🔎</div><p>${msg}</p></div></div>`;
+  el.classList.add('visible');
+}
+
+// ══════════════════════════════════════════════
+// CENTRAL DE DEUDORES
+// ══════════════════════════════════════════════
+async function consultarDeudores() {
+  const rawCuit = document.getElementById('cuit-deudores').value.trim();
+  const cuit = parseCuit(rawCuit);
+  const tipo = document.getElementById('tipo-deudores').value;
+  const container = document.getElementById('result-deudores');
+
+  if (!validarCuit(cuit)) {
+    container.innerHTML = `<div class="state-error">⚠️ Ingresá un CUIT de 11 dígitos sin guiones.</div>`;
+    container.classList.add('visible');
+    return;
+  }
+
+  setLoading('btn-deudores', true);
+  container.classList.remove('visible');
+
+  try {
+    const endpoint = tipo === 'historico'
+      ? `${BASE_DEUDORES}/Deudas/Historicas/${cuit}`
+      : `${BASE_DEUDORES}/Deudas/${cuit}`;
+
+    const data = await fetchBCRA(endpoint);
+
+    if (data.notFound) {
+      showEmpty('result-deudores', `Sin registros en Central de Deudores para el CUIT <strong>${formatCuit(cuit)}</strong>.`);
+      return;
+    }
+
+    const periodos = data.periodos || [];
+    const peor = peorSituacion(periodos);
+
+    let html = `<div class="card">
+      <div class="denom-header">
+        <div>
+          <div class="denom-name">${data.denominacion || '—'}</div>
+          <div class="cuit-sub">CUIT ${formatCuit(cuit)}</div>
+        </div>
+        <span class="sit-badge ${sitClass(peor)}">${sitLabel(peor)}</span>
+      </div>`;
+
+    if (periodos.length === 0) {
+      html += `<div class="state-empty"><div class="emoji">✅</div><p>Sin deudas informadas.</p></div>`;
+    } else {
+      periodos.forEach(p => {
+        html += `<div class="periodo-block">
+          <div class="periodo-label">${formatPeriodo(String(p.periodo))}</div>`;
+        (p.entidades || []).forEach(e => {
+          const flags = [];
+          if (e.refinanciaciones)       flags.push('<span class="flag">Refinanciaciones</span>');
+          if (e.recategorizacionOblig)  flags.push('<span class="flag">Recategorización oblig.</span>');
+          if (e.situacionJuridica)      flags.push('<span class="flag danger">Situación jurídica</span>');
+          if (e.irrecDisposicionTecnica)flags.push('<span class="flag danger">Irrecuperable DT</span>');
+          if (e.enRevision)             flags.push('<span class="flag">En revisión</span>');
+          if (e.procesoJud)             flags.push('<span class="flag danger">Proceso judicial</span>');
+
+          html += `<div class="entidad-row">
+            <div>
+              <div class="entidad-name">${e.entidad}</div>
+              ${e.diasAtrasoPago > 0 ? `<div style="font-size:11px;color:var(--danger);margin-top:2px;">${e.diasAtrasoPago} días de atraso</div>` : ''}
+            </div>
+            <div class="entidad-monto">${formatMonto(e.monto)}</div>
+            <div>
+              <span class="sit-badge ${sitClass(e.situacion)}" style="margin-bottom:4px;">${sitLabel(e.situacion)}</span>
+              ${flags.length ? `<div class="entidad-flags">${flags.join('')}</div>` : ''}
+            </div>
+          </div>`;
+        });
+        html += `</div>`;
+      });
+    }
+
+    html += `</div>`;
+    container.innerHTML = html;
+    container.classList.add('visible');
+
+  } catch(err) {
+    showError('result-deudores', err.message);
+  } finally {
+    setLoading('btn-deudores', false);
+    document.getElementById('btn-deudores').innerHTML = 'Consultar';
+    document.getElementById('btn-deudores').disabled = false;
+  }
+}
+
+// ══════════════════════════════════════════════
+// CHEQUES RECHAZADOS POR CUIT
+// ══════════════════════════════════════════════
+async function consultarChequesCuit() {
+  const rawCuit = document.getElementById('cuit-cheques').value.trim();
+  const cuit = parseCuit(rawCuit);
+  const container = document.getElementById('result-cheques-cuit');
+
+  if (!validarCuit(cuit)) {
+    container.innerHTML = `<div class="state-error">⚠️ Ingresá un CUIT de 11 dígitos sin guiones.</div>`;
+    container.classList.add('visible');
+    return;
+  }
+
+  setLoading('btn-cheques-cuit', true);
+  container.classList.remove('visible');
+
+  try {
+    const data = await fetchBCRA(`${BASE_DEUDORES}/Deudas/ChequesRechazados/${cuit}`);
+
+    if (data.notFound) {
+      showEmpty('result-cheques-cuit', `Sin cheques rechazados para el CUIT <strong>${formatCuit(cuit)}</strong>.`);
+      return;
+    }
+
+    const causales = data.causales || [];
+    let totalCheques = 0;
+    causales.forEach(c => c.entidades && c.entidades.forEach(e => { totalCheques += (e.detalle || []).length; }));
+
+    if (totalCheques === 0) {
+      showEmpty('result-cheques-cuit', `Sin cheques rechazados para el CUIT <strong>${formatCuit(cuit)}</strong>.`);
+      return;
+    }
+
+    let html = `<div class="card">
+      <div class="denom-header">
+        <div>
+          <div class="denom-name">${data.denominacion || '—'}</div>
+          <div class="cuit-sub">CUIT ${formatCuit(cuit)}</div>
+        </div>
+        <span class="sit-badge sit-5">⚠️ ${totalCheques} cheque${totalCheques !== 1 ? 's' : ''} rechazado${totalCheques !== 1 ? 's' : ''}</span>
+      </div>`;
+
+    causales.forEach(causal => {
+      (causal.entidades || []).forEach(entBlock => {
+        (entBlock.detalle || []).forEach(ch => {
+          const esSinFondos = (causal.causal || '').toUpperCase().includes('FONDOS');
+          const multaClass = ch.estadoMulta === 'IMPAGA' ? 'multa-impaga' : 'multa-ok';
+          const causlClass = esSinFondos ? '' : 'defecto';
+          html += `<div class="cheque-card">
+            <div class="cheque-header">
+              <span class="cheque-num">Nro. ${ch.nroCheque}</span>
+              <span class="cheque-causal ${causlClass}">${causal.causal || '?'}</span>
+              ${ch.denomJuridica ? `<span style="font-size:12px;color:var(--text-secondary);">— ${ch.denomJuridica}</span>` : ''}
+            </div>
+            <div class="cheque-grid">
+              <div class="cheque-field"><span class="k">Rechazo</span><span class="v">${formatFecha(ch.fechaRechazo)}</span></div>
+              <div class="cheque-field"><span class="k">Monto</span><span class="v">$${Number(ch.monto).toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></div>
+              <div class="cheque-field"><span class="k">Pago</span><span class="v">${ch.fechaPago ? formatFecha(ch.fechaPago) : '—'}</span></div>
+              <div class="cheque-field"><span class="k">Multa</span><span class="v ${multaClass}">${ch.estadoMulta || (ch.fechaPagoMulta ? 'Pagada '+formatFecha(ch.fechaPagoMulta) : '—')}</span></div>
+              ${ch.enRevision ? `<div class="cheque-field"><span class="k">Estado</span><span class="v" style="color:var(--warn);">En revisión</span></div>` : ''}
+              ${ch.procesoJud ? `<div class="cheque-field"><span class="k">Proceso</span><span class="v" style="color:var(--danger);">Judicial</span></div>` : ''}
+            </div>
+          </div>`;
+        });
+      });
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+    container.classList.add('visible');
+
+  } catch(err) {
+    showError('result-cheques-cuit', err.message);
+  } finally {
+    document.getElementById('btn-cheques-cuit').innerHTML = 'Consultar';
+    document.getElementById('btn-cheques-cuit').disabled = false;
+  }
+}
+
+// ══════════════════════════════════════════════
+// CHEQUE POR NÚMERO
+// ══════════════════════════════════════════════
+async function cargarEntidades() {
+  try {
+    const res = await fetch(`${BASE_CHEQUES}/entidades`);
+    const data = await res.json();
+    const sel = document.getElementById('entidad-select');
+    sel.innerHTML = '<option value="">— Seleccioná un banco —</option>';
+    (data.results || []).forEach(e => {
+      const opt = document.createElement('option');
+      opt.value = e.codigoEntidad;
+      opt.textContent = `${e.codigoEntidad} — ${e.denominacion.trim()}`;
+      sel.appendChild(opt);
+    });
+  } catch(e) {
+    document.getElementById('entidad-select').innerHTML = '<option value="">— Error al cargar bancos —</option>';
+  }
+}
+
+async function consultarChequeNum() {
+  const entidad = document.getElementById('entidad-select').value;
+  const numero  = document.getElementById('num-cheque').value.trim();
+  const container = document.getElementById('result-cheque-num');
+
+  if (!entidad || !numero) {
+    container.innerHTML = `<div class="state-error">⚠️ Seleccioná una entidad e ingresá el número de cheque.</div>`;
+    container.classList.add('visible');
+    return;
+  }
+
+  setLoading('btn-cheque-num', true);
+  container.classList.remove('visible');
+
+  try {
+    const res = await fetch(`${BASE_CHEQUES}/denunciados/${entidad}/${numero}`);
+    const data = await res.json();
+
+    if (data.status === 404) {
+      showEmpty('result-cheque-num', 'Entidad no encontrada. Verificá el código de banco.');
+      return;
+    }
+    if (data.status !== 200) throw new Error((data.errorMessages || ['Error']).join(', '));
+
+    const r = data.results;
+
+    if (!r.denunciado) {
+      let html = `<div class="card">
+        <div class="denom-header">
+          <div>
+            <div class="denom-name">Cheque Nro. ${r.numeroCheque}</div>
+            <div class="cuit-sub">${r.denominacionEntidad}</div>
+          </div>
+          <span class="sit-badge sit-ok">✅ No denunciado</span>
+        </div>
+        <div style="font-size:13px;color:var(--text-secondary);">Procesado al ${formatFecha(r.fechaProcesamiento)}. El cheque no figura como denunciado en el BCRA.</div>
+      </div>`;
+      container.innerHTML = html;
+    } else {
+      let html = `<div class="card">
+        <div class="denom-header">
+          <div>
+            <div class="denom-name">Cheque Nro. ${r.numeroCheque}</div>
+            <div class="cuit-sub">${r.denominacionEntidad}</div>
+          </div>
+          <span class="sit-badge sit-5">⚠️ DENUNCIADO</span>
+        </div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:14px;">Procesado al ${formatFecha(r.fechaProcesamiento)}</div>`;
+
+      (r.detalles || []).forEach(d => {
+        html += `<div class="entidad-row">
+          <div><div class="entidad-name">Sucursal ${d.sucursal}</div><div style="font-size:11px;color:var(--text-secondary);">Cta. ${d.numeroCuenta}</div></div>
+          <div></div>
+          <span class="sit-badge sit-5">${d.causal}</span>
+        </div>`;
+      });
+
+      html += `</div>`;
+      container.innerHTML = html;
+    }
+    container.classList.add('visible');
+
+  } catch(err) {
+    showError('result-cheque-num', err.message);
+  } finally {
+    document.getElementById('btn-cheque-num').innerHTML = 'Consultar';
+    document.getElementById('btn-cheque-num').disabled = false;
+  }
+}
+
+// ══════════════════════════════════════════════
+// LOTE
+// ══════════════════════════════════════════════
+let loteResultados = [];
+
+function cargarArchivo(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('lote-input').value = e.target.result.trim();
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+function limpiarLote() {
+  document.getElementById('lote-input').value = '';
+  document.getElementById('result-lote').classList.remove('visible');
+  document.getElementById('lote-progress').style.display = 'none';
+  loteResultados = [];
+}
+
+async function procesarLote() {
+  const raw = document.getElementById('lote-input').value;
+  const lines = raw.split('\n').map(l => parseCuit(l.trim())).filter(l => validarCuit(l));
+  const invalidas = raw.split('\n').map(l => l.trim()).filter(l => l && !validarCuit(parseCuit(l)));
+
+  if (lines.length === 0) {
+    showError('result-lote', 'No hay CUITs válidos. Verificá el formato (11 dígitos sin guiones, uno por línea).');
+    document.getElementById('result-lote').classList.add('visible');
+    return;
+  }
+
+  const cuits = [...new Set(lines)].slice(0, 50); // dedup + límite
+
+  const btn = document.getElementById('btn-lote');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner" style="border-top-color:white;"></span>Procesando...';
+
+  const progress = document.getElementById('lote-progress');
+  const fill = document.getElementById('progress-fill');
+  const label = document.getElementById('progress-label');
+  progress.style.display = 'block';
+  fill.style.width = '0%';
+
+  loteResultados = [];
+
+  for (let i = 0; i < cuits.length; i++) {
+    const cuit = cuits[i];
+    fill.style.width = `${Math.round((i / cuits.length) * 100)}%`;
+    label.textContent = `Consultando ${i+1} de ${cuits.length}: ${formatCuit(cuit)}`;
+
+    let row = { cuit, denominacion: '—', situacion: '—', peor: 0, montoPesos: 0, chequesRechazados: 0, estado: 'ok' };
+
+    try {
+      const [deuda, cheques] = await Promise.all([
+        fetchBCRA(`${BASE_DEUDORES}/Deudas/${cuit}`).catch(() => null),
+        fetchBCRA(`${BASE_DEUDORES}/Deudas/ChequesRechazados/${cuit}`).catch(() => null)
+      ]);
+
+      if (deuda && !deuda.notFound) {
+        row.denominacion = deuda.denominacion || '—';
+        const peor = peorSituacion(deuda.periodos);
+        row.peor = peor;
+        row.situacion = sitLabel(peor);
+        let monto = 0;
+        (deuda.periodos || []).slice(0,1).forEach(p => p.entidades.forEach(e => { monto += (e.monto || 0); }));
+        row.montoPesos = monto * 1000;
+      } else if (deuda && deuda.notFound) {
+        row.denominacion = '(sin registros)';
+        row.situacion = 'Sin datos';
+      }
+
+      if (cheques && !cheques.notFound) {
+        if (!row.denominacion || row.denominacion === '—' || row.denominacion === '(sin registros)') {
+          row.denominacion = cheques.denominacion || '—';
+        }
+        let cnt = 0;
+        (cheques.causales || []).forEach(c => c.entidades && c.entidades.forEach(e => { cnt += (e.detalle || []).length; }));
+        row.chequesRechazados = cnt;
+      }
+
+    } catch(e) {
+      row.estado = 'error';
+      row.situacion = 'Error de consulta';
+    }
+
+    loteResultados.push(row);
+    await new Promise(r => setTimeout(r, 200)); // pausa para no saturar
+  }
+
+  fill.style.width = '100%';
+  label.textContent = `✅ Proceso completo — ${cuits.length} CUIT${cuits.length !== 1 ? 's' : ''} consultado${cuits.length !== 1 ? 's' : ''}`;
+
+  renderTablaLote(invalidas);
+
+  btn.disabled = false;
+  btn.innerHTML = 'Procesar lista';
+}
+
+function renderTablaLote(invalidas) {
+  const container = document.getElementById('result-lote');
+
+  let html = `<div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+      <div class="card-title" style="margin:0;">Resultados — ${loteResultados.length} clientes</div>
+      <button class="btn btn-secondary btn-sm" onclick="exportarCSV()">📥 Exportar CSV</button>
+    </div>`;
+
+  if (invalidas && invalidas.length > 0) {
+    html += `<div style="margin-bottom:14px;padding:10px 14px;background:var(--warn-bg);border-radius:6px;font-size:12px;color:var(--warn);">
+      ⚠️ CUITs ignorados por formato inválido: <strong>${invalidas.join(', ')}</strong>
+    </div>`;
+  }
+
+  html += `<div class="table-wrap"><table>
+    <thead>
+      <tr>
+        <th>CUIT</th>
+        <th>Denominación</th>
+        <th>Situación</th>
+        <th class="text-right">Deuda (último período)</th>
+        <th class="text-right">Cheques rechazados</th>
+        <th>Semáforo</th>
+      </tr>
+    </thead>
+    <tbody>`;
+
+  loteResultados.forEach(r => {
+    const semaforo = r.chequesRechazados > 0 ? '🔴 Cheques'
+      : r.peor >= 4 ? '🔴 Alto riesgo'
+      : r.peor === 3 ? '🟠 Con problemas'
+      : r.peor === 2 ? '🟡 Seguimiento'
+      : r.estado === 'error' ? '⚪ Error'
+      : '🟢 Normal';
+
+    html += `<tr>
+      <td class="mono">${formatCuit(r.cuit)}</td>
+      <td>${r.denominacion}</td>
+      <td><span class="sit-badge ${r.peor >= 1 && r.peor <= 5 ? `sit-${r.peor}` : ''}" style="font-size:11px;">${r.situacion}</span></td>
+      <td class="text-right mono">${r.montoPesos > 0 ? '$' + r.montoPesos.toLocaleString('es-AR',{minimumFractionDigits:0}) : '—'}</td>
+      <td class="text-right">${r.chequesRechazados > 0 ? `<strong style="color:var(--danger)">${r.chequesRechazados}</strong>` : '0'}</td>
+      <td>${semaforo}</td>
+    </tr>`;
+  });
+
+  html += `</tbody></table></div></div>`;
+  container.innerHTML = html;
+  container.classList.add('visible');
+}
+
+function exportarCSV() {
+  const headers = ['CUIT','Denominacion','Situacion','Peor_Situacion','Deuda_Ultimo_Periodo_ARS','Cheques_Rechazados'];
+  const rows = loteResultados.map(r => [
+    formatCuit(r.cuit),
+    `"${(r.denominacion||'').replace(/"/g,'""')}"`,
+    `"${(r.situacion||'').replace(/"/g,'""')}"`,
+    r.peor || 0,
+    r.montoPesos || 0,
+    r.chequesRechazados || 0
+  ]);
+  const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `BCRA_Consulta_Lote_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+// ══════════════════════════════════════════════
+// Init
+// ══════════════════════════════════════════════
+cargarEntidades();
+
+// Enter en inputs
+['cuit-deudores','tipo-deudores'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('keydown', e => { if(e.key === 'Enter') consultarDeudores(); });
+});
+document.getElementById('cuit-cheques').addEventListener('keydown', e => { if(e.key === 'Enter') consultarChequesCuit(); });
+document.getElementById('num-cheque').addEventListener('keydown', e => { if(e.key === 'Enter') consultarChequeNum(); });
+</script>
+</body>
+</html>
